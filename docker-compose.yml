@@ -1,0 +1,93 @@
+version: '3'
+
+services:
+  nginx:
+    build: docker-images/prestashop-nginx
+    restart: always
+    volumes:
+      - prestashop-data:/var/www/html/
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - frontend
+    depends_on:
+      - prestashop
+
+  prestashop:
+    build: docker-images/prestashop-fpm
+    restart: always
+    volumes:
+      - prestashop-data:/var/www/html/
+    networks:
+      - frontend
+      - db
+      - cache
+    depends_on:
+      - db
+      - memcached
+    environment:
+      - PS_FOLDER_ADMIN=${PS_FOLDER_ADMIN}
+
+  db:
+    image: percona
+    restart: always
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+  adminer:
+    image: adminer
+    ports:
+      - 9010:8080
+    networks:
+      - db
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  autobackup:
+    build: docker-images/prestashop-autobackup
+    volumes:
+      - db-data:/var/lib/mysql
+      - prestashop-data:/data/prestashop
+    networks:
+      - db
+    environment:
+      DUPLICACY_BACKUP_OPTIONS: -threads 1 -stats
+      BACKUP_NAME: ${BACKUP_NAME}
+      BACKUP_LOCATION: ${BACKUP_LOCATION}
+      BACKUP_SCHEDULE: ${BACKUP_SCHEDULE}
+      B2_ID: ${B2_ID}
+      B2_KEY: ${B2_KEY}
+      MYSQL_HOST: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    deploy:
+      restart_policy:
+        max_attempts: 3
+        window: 60s
+
+  memcached:
+    image: memcached:alpine
+    networks:
+      - cache
+    deploy:
+      restart_policy:
+        max_attempts: 3
+        window: 60s
+ 
+volumes:
+  db-data:
+  prestashop-data:
+
+networks:
+  frontend:
+  db:
+  cache:
