@@ -2,6 +2,7 @@ version: '3'
 
 services:
   nginx:
+    image: ${CI_REGISTRY_IMAGE}/prestashop-nginx:latest
     build: docker-images/prestashop-nginx
     restart: always
     volumes:
@@ -15,6 +16,7 @@ services:
       - prestashop
 
   prestashop:
+    image: ${CI_REGISTRY_IMAGE}/prestashop-fpm:latest
     build: docker-images/prestashop-fpm
     restart: always
     volumes:
@@ -53,6 +55,7 @@ services:
         window: 120s
 
   autobackup:
+    image: ${CI_REGISTRY_IMAGE}/prestashop-autobackup:latest
     build: docker-images/prestashop-autobackup
     volumes:
       - db-data:/var/lib/mysql

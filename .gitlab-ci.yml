@@ -1,0 +1,14 @@
+image: docker:latest
+
+services:
+- docker:dind
+
+before_script:
+- docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+- apk add --no-cache py-pip
+- pip install docker-compose
+
+build:
+  script:
+    - docker-compose build
+    - docker-compose push
