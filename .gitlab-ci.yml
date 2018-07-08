@@ -1,5 +1,9 @@
 image: docker:latest
 
+variables:
+  DOCKER_DRIVER: overlay2
+  PROJECTS: prestashop-nginx;prestashop-fpm;prestashop-autobackup
+
 services:
 - docker:dind
 
@@ -7,6 +11,7 @@ before_script:
 - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
 - apk add --no-cache py-pip
 - pip install docker-compose
+- for PROJ in ${PROJECTS//;/ }; do docker pull $CI_REGISTRY_IMAGE/$PROJ:latest || true; done
 
 build:
   script:

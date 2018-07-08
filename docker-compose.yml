@@ -1,9 +1,12 @@
-version: '3'
+version: '3.2'
 
 services:
   nginx:
     image: ${CI_REGISTRY_IMAGE}/prestashop-nginx:latest
-    build: docker-images/prestashop-nginx
+    build: 
+      context: docker-images/prestashop-nginx
+      cache_from:
+        - ${CI_REGISTRY_IMAGE}/prestashop-nginx:latest
     restart: always
     volumes:
       - prestashop-data:/var/www/html/
@@ -17,7 +20,10 @@ services:
 
   prestashop:
     image: ${CI_REGISTRY_IMAGE}/prestashop-fpm:latest
-    build: docker-images/prestashop-fpm
+    build: 
+      context: docker-images/prestashop-fpm
+      cache_from:
+        - ${CI_REGISTRY_IMAGE}/prestashop-fpm:latest
     restart: always
     volumes:
       - prestashop-data:/var/www/html/
@@ -56,7 +62,10 @@ services:
 
   autobackup:
     image: ${CI_REGISTRY_IMAGE}/prestashop-autobackup:latest
-    build: docker-images/prestashop-autobackup
+    build: 
+      context: docker-images/prestashop-autobackup
+      cache_from:
+        - ${CI_REGISTRY_IMAGE}/prestashop-autobackup:latest
     volumes:
       - db-data:/var/lib/mysql
       - prestashop-data:/data/prestashop
