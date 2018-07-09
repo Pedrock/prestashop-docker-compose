@@ -27,5 +27,5 @@ docker login registry.gitlab.com -u <username> -p <deploy_token>
 
 Deploy:
 ```bash
-. .env && docker stack deploy -c docker-compose.yml prestashop
+./deploy.sh
 ```
