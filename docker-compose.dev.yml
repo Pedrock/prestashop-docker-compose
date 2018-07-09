@@ -48,9 +48,7 @@ services:
     networks:
       - db
     environment:
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql-root-password
-    secrets:
-      - mysql-root-password
+      - MYSQL_ROOT_PASSWORD=example
     deploy:
       placement:
         constraints: [node.labels.my-service == true]
@@ -67,37 +65,6 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-
-  autobackup:
-    image: ${CI_REGISTRY_IMAGE}/prestashop-autobackup:latest
-    build: 
-      context: docker-images/prestashop-autobackup
-      cache_from:
-        - ${CI_REGISTRY_IMAGE}/prestashop-autobackup:latest
-    volumes:
-      - db-data:/var/lib/mysql
-      - prestashop-data:/data/prestashop
-    networks:
-      - db
-    environment:
-      - DUPLICACY_BACKUP_OPTIONS=-threads 1 -stats
-      - BACKUP_NAME=${BACKUP_NAME}
-      - BACKUP_LOCATION=${BACKUP_LOCATION}
-      - BACKUP_SCHEDULE=${BACKUP_SCHEDULE}
-      - B2_ID_FILE=/run/secrets/b2_id
-      - B2_KEY_FILE=/run/secrets/b2_key
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQ_PASSWORD_FILE=/run/secrets/mysql_root_password
-    secrets:
-      - b2_id
-      - b2_key
-    deploy:
-      restart_policy:
-        max_attempts: 3
-        window: 60s
-      placement:
-        constraints: [node.labels.my-service == true]
 
   memcached:
     image: memcached:alpine
@@ -116,11 +83,3 @@ networks:
   frontend:
   db:
   cache:
-
-secrets:
-  mysql-root-password:
-    external: true
-  b2_id:
-    external: true
-  b2_key:
-    external: true

@@ -9,9 +9,23 @@ docker-compose push
 
 ### Deploy to the swarm
 
-Create deploy token
+Create deploy token.
 
-On the server run:
+Configure host with docker-machine.
+
+Configure the secrets.
+
+Add a label to the host:
+```bash
+docker node update --label-add my-service=true ID
+```
+
+Login into the registry:
 ```bash
 docker login registry.gitlab.com -u <username> -p <deploy_token>
+```
+
+Deploy:
+```bash
+. .env && docker stack deploy -c docker-compose.yml prestashop
 ```
