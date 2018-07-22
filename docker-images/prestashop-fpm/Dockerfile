@@ -1,4 +1,16 @@
-FROM prestashop/prestashop:1.7-7.1-fpm
+FROM prestashop/base:7.2-fpm
+
+ENV PS_VERSION 1.7.4.1
+
+# Get PrestaShop
+ADD https://www.prestashop.com/download/old/prestashop_1.7.4.1.zip /tmp/prestashop.zip
+
+# Extract
+RUN mkdir -p /tmp/data-ps \
+	&& unzip -q /tmp/prestashop.zip -d /tmp/data-ps/ \
+	&& bash /tmp/ps-extractor.sh /tmp/data-ps \
+&& rm /tmp/prestashop.zip
+
 
 # Install and enable APCu
 # RUN pecl install apcu-5.1.8 \
