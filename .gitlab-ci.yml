@@ -15,5 +15,5 @@ before_script:
 
 build:
   script:
-    - docker-compose build
+    - docker-compose build --pull
     - docker-compose push
