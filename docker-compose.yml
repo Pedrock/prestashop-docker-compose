@@ -88,10 +88,11 @@ services:
       - B2_KEY_FILE=/run/secrets/b2_key
       - MYSQL_HOST=db
       - MYSQL_USER=root
-      - MYSQ_PASSWORD_FILE=/run/secrets/mysql_root_password
+      - MYSQL_PASSWORD_FILE=/run/secrets/mysql-root-password
     secrets:
       - b2_id
       - b2_key
+      - mysql-root-password
     deploy:
       restart_policy:
         max_attempts: 3
