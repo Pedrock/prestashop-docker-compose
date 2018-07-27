@@ -33,8 +33,8 @@ RUN apt-get update \
 
 # Install duplicacy
 RUN wget https://github.com/gilbertchen/duplicacy/releases/download/v2.1.0/duplicacy_linux_x64_2.1.0 \
-    -O /usr/local/bin/duplicacy && \
-    chmod +x /usr/local/bin/duplicacy
+    -O /usr/bin/duplicacy && \
+    chmod +x /usr/bin/duplicacy
 
 RUN mkdir /app
 WORKDIR /app
